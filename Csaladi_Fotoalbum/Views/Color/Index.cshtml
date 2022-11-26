@@ -1,0 +1,18 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@model List<Color>
+@{
+    ViewData["Title"] = "Színek";
+}
+<div class="container-fluid">
+ <div class="row">
+@foreach(Color c in Model){
+    <div class="card" style="width: 36rem;background-color: #@c.Colorcode; border-radius: 0;">
+        <div class="card-body">
+            <a asp-controller="Color" asp-action="@c.Id" class="btn text-white stretched-link mt-4 mb-4 w-100 display-4">
+                <span class="display-6">@c.Name</span>
+            </a>
+        </div>
+    </div>
+}
+    </div>
+</div>

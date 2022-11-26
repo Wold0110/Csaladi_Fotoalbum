@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "splidejs@4.1.4",
+      "destination": "wwwroot/lib/splidejs/",
+      "files": [
+        "js/splide.min.js",
+        "css/splide.min.css"
+      ]
+    }
+  ]
+}

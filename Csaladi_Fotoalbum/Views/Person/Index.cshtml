@@ -1,0 +1,18 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@model List<Person>
+@{
+    ViewData["Title"] = "Emberek listázása";
+}
+
+@if(Model.Count == 0){
+    <h1>Nincs ember az adatbázisban</h1>
+}
+else{
+    <h1>Emberek listája:</h1>
+    foreach(Person p in Model)
+    {
+        <a asp-controller="Person" asp-action="@p.Id"><li>@p.Name</li></a>
+    }
+}
+<br />
+<a asp-controller="Person" asp-action="NewPerson">Új ember létrehozása</a>

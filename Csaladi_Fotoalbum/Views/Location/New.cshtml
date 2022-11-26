@@ -1,0 +1,10 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@{
+    ViewData["Title"] = "Helyszín létrehozása";
+}
+
+<form asp-controller="Location" asp-action="Insert">
+    <label class="form-control-lg" for="name">Helyszín neve:</label>
+    <input type="text" name="name" placeholder="Elte IK Lágymányosi Campus"/>
+    <input type="submit" class="btn btn-primary" value="Helyszín beszúrása"/>
+</form>

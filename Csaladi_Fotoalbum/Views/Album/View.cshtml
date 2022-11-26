@@ -1,0 +1,142 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@using System.IO;
+@model DatabaseContext
+@{
+    ViewData["Title"] = "Albumok";
+    int id = 0;
+    string size = "";
+    if (ViewBag.Id != null) id = ViewBag.Id;
+    if (ViewBag.size != null) size = ViewBag.size;
+    if (String.IsNullOrEmpty(size)) size = "col-8";
+    Album a = Model.Albums.Where(x => x.Id == id).First();
+    Color c = Model.Colors.Where(x => x.Id == a.Color).First();
+    Location l = Model.Locations.Where(x => x.Id == a.Location).First();
+    List<Person> people = new List<Person>();
+    List<int> IDs = Model.Connections.Where(x => x.Album == a.Id).Select(x => x.Person).ToList<int>();
+    foreach(int x in IDs)
+    {
+        people.Add(Model.People.Where(y => y.Id == x).First());
+    }
+
+    List<string> photos = new List<string>();
+    if (Directory.Exists("wwwroot/photos/" + a.Id))
+        photos = Directory.GetFiles("wwwroot/photos/" + a.Id).ToList();
+}
+<div class="container">
+    <div class="row">
+        <div class="col-6 border border-2 border-warning mb-2">
+            <p class="display-4" style="color: #@c.Colorcode">@a.Name</p>
+            <p class="display-6">Helyszín: <b>@l.Name</b></p>
+            <p class="display-6">Dátum: <b>@a.Date.ToString("yyyy-MM-dd")</b></p>
+            <p class="display-6">Emberek:</p>
+            @if(people.Count == 0)
+            {
+                <p>Nincs ember társítva ehhez az albumhoz</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach(Person p in people)
+                    {
+                        <li>@p.Name <a class="text-decoration-none text-danger" asp-controller="Album" asp-action="@a.Id" asp-route-id="@p.Id">Törlés 🗑️</a></li>
+                    } 
+                </ul>
+            }
+        </div>
+        <div class="col-6">
+            @if(IDs.Count != Model.People.Count())
+            {
+                <div class="border border-2 border-success p-2">
+                    <form asp-controller="Album" asp-action="LinkPerson">
+                        <input type="hidden" name="id" value="@a.Id" />
+                        <label class="form-control-lg">Új ember hozzáfűzése</label><br>
+                        <select class="form-control-lg" name="person">
+                            @foreach(Person p in Model.People)
+                            {
+                                @if (!IDs.Contains(p.Id))
+                                {
+                                    <option value="@p.Id">@p.Name</option>
+                                }
+                            }
+                        </select><br />
+                        <input type="submit" class="btn btn-success mt-2 w-100" value="Ember hozzákötése az albumhoz" />
+                    </form>
+                </div>
+            }
+            else
+            {
+                <h3>Minden ember társítva van az albumhoz.</h3>
+            }
+            <div class="border border-2 border-primary p-3">
+            <form asp-controller="Album" asp-action="ImgSize">
+                <input type="hidden" name="album" value="@a.Id" />
+                <select name="size" class="form-control-lg">
+                    <!option value="col-4" @(size == "col-4" ? "selected" : "")>Kicsi</!option>
+                    <!option value="col-6" @(size == "col-6" ? "selected" : "")>Közepes</!option>
+                    <!option value="col-8" @(size == "col-8" ? "selected" : "")>Nagy</!option>
+                </select>
+                <input type="submit" class="w-100 btn btn-primary mt-1" value="Méret állítás" />
+            </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4 border border-2 border-primary p-2">
+            <div class="mb-5">
+                <h3>Album bővítése</h3>
+                <form asp-controller="Album" method="post" enctype="multipart/form-data" asp-action="Upload" asp-route-id="@a.Id">
+                    <label class="form-control-lg" for="photo">Feltöltendő fotó:</label>
+                    <input type="file" class="form-control" multiple name="photo" accept="image/png, image/jpeg, image/jpg" />
+                    <input type="submit" class="btn btn-primary w-100 mt-1" value="Fotó feltöltése" />
+                </form>
+            </div>
+            
+            <h3>Az album tartalmának letöltése</h3>
+            <a class="text-decoration-none display-6 text-center" asp-controller="Album" asp-action="Download" asp-route-id="@a.Id">Kattints rám</a>
+
+            <div class="row mt-5">
+                <div class="col-6">
+                    <a class="btn btn-warning text-white w-100" asp-controller="Album" asp-action="Edit" asp-route-id="@a.Id">Szerkesztés</a>
+                </div>
+                <div class="col-6">
+                    <a class="btn btn-danger text-white w-100" asp-controller="Album" asp-action="Del" asp-route-id="@a.Id">Törlés</a>
+                </div>
+            </div>
+        </div>
+        <div class="@size">
+            @if (photos.Count > 0)
+            {
+                <section class="splide" aria-label="Splide Basic HTML Example">
+                    <div class="splide__track">
+                        <ul class="splide__list">
+                            @foreach (var x in photos)
+                            {
+                                <li class='splide__slide'>
+                                    <a class="btn btn-danger position-absolute" asp-controller="Album" asp-action="DelImg" asp-route-id="@a.Id"
+                                        asp-route-picture="@System.IO.Path.GetFileName(x)">Törlés</a>
+                                    <img class="img img-fluid rounded mx-auto d-block" src="../@x.Substring(8).Replace(@"\","/")">
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </section>
+                <script>
+                    $( document ).ready(function() {
+                        var splide = new Splide( '.splide', {
+                        type: 'loop',
+                        perPage: 1,
+                        autoplay: true,
+                        wheel: true,
+                        });
+                        splide.mount();
+                    });
+                </script>
+            }
+            else
+            {
+                <p class="display-2">Nincs kép feltöltve ehhez az albumhoz.</p>
+            }
+        </div>
+    </div>
+</div>
+

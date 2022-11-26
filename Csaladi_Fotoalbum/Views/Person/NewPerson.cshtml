@@ -1,0 +1,8 @@
+﻿@{
+    ViewData["Title"] = "Új ember";
+}
+<form asp-action="InsertPerson" asp-controller="Person">
+    <label class="form-control-lg" for="name">Új ember neve:</label>
+    <input class="form-control-lg" name="name" placeholder="John Doe" />
+    <input type="submit" value="Új ember létrehozása" class="btn btn-primary">
+</form>

@@ -1,0 +1,9 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@model Person
+
+<form asp-action="UpdatePerson" asp-controller="Person">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <label class="form-control-lg" for="name">Ember neve:</label>
+    <input class="form-control-lg" type="text" name="name" value="@Model.Name"/>
+    <input type="submit" value="Ember nevének frissítése" class="btn btn-primary"/>
+</form>

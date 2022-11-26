@@ -1,0 +1,13 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@model DatabaseContext
+@{
+    ViewData["Title"] = "Letöltés";
+    List<Color> colors = Model.Colors.ToList();
+}
+
+<ul>
+@foreach(Album a in Model.Albums){
+        <a style="background-color: #@colors.Where(x => x.Id == a.Color).First().Colorcode; color: #@colors.Where(x => x.Id == a.Color).First().Colorcode" class="text-decoration-none display-4" asp-controller="Album" asp-action="Download" asp-route-id="@a.Id">
+        <li>@a.Name</li></a>
+}
+></ul>

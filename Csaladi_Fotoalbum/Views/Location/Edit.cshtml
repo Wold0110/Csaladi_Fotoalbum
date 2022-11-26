@@ -1,0 +1,12 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@{
+    ViewData["Title"] = "Helyszínek";
+}
+@model Location
+
+<form asp-controller="Location" asp-action="Update">
+    <input type="hidden" name="id" value="@Model.Id"/>
+    <label class="form-control-lg" for="name">Helyszín neve:</label>
+    <input type="text" name="name" value="@Model.Name" placeholder="Elte IK Lágymányosi Campus"/>
+    <input type="submit" class="btn btn-primary" value="Helyszín frissítése"/>
+</form>

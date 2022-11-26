@@ -1,0 +1,35 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@using System.IO;
+@model DatabaseContext
+@{
+    ViewData["Title"] = "Szerkesztés";
+    int i = ViewBag.Album == null ? 0 : ViewBag.Album;
+    Album a = Model.Albums.Where(x => x.Id == i).First();
+}
+<form asp-controller="Album" asp-action="Update">
+    <input type="hidden" name="id" value="@a.Id" />
+
+    <label class="form-control-lg" for="name">Album neve:</label>
+    <input class="form-control-lg" type="text" name="name" value="@a.Name" placeholder="Az én albumom"/><br />
+
+    <label class="form-control-lg mt-5" for="date">Dátum:</label>
+    <input type="date" name="date" value="@a.Date.ToString("yyyy-MM-dd")" class="form-control-lg" /><br />
+
+    <label class="form-control-lg mt-5" for="color">Szín:</label>
+    <select class="form-control-lg" name="color">
+        @foreach (Color c in Model.Colors)
+        {
+            <!option style="background-color: #@c.Colorcode;" @(c.Id == a.Color ? "selected" : "") class="text-white" value="@c.Id">@c.Name</!option>
+        }
+    </select><br>
+
+    <label class="form-control-lg mt-5" for="location">Helyszínek:</label>
+    <select class="form-control-lg" name="location">
+        @foreach (Location l in Model.Locations)
+        {
+                <!option value="@l.Id" @(l.Id == a.Location ? "selected" : "")>@l.Name</!option>
+        }
+    </select><br />
+
+    <input type="submit" class="btn btn-primary mt-5 ml-5" value="Album frissítése"/>
+</form>

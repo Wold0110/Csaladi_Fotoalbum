@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext "Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\walte\source\repos\Csaladi_Fotoalbum\Csaladi_Fotoalbum\DATABASE.mdf;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DatabaseModels

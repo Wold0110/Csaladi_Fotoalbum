@@ -1,0 +1,114 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@model DatabaseContext
+@{
+    ViewData["Title"] = "Főoldal";
+
+    List<Color> colors = Model.Colors.ToList();
+    List<Location> locations = Model.Locations.ToList();
+    List<Person> people = Model.People.ToList();
+    List<int> IDs = new List<int>();
+    string filter = "";
+    string location = "";
+    if(ViewBag.people != null && !String.IsNullOrEmpty(ViewBag.people))
+    {
+        filter = ViewBag.people;
+        string[] tmp = ViewBag.people.Split(';');
+        foreach(string x in tmp)
+            IDs.Add(int.Parse(x));
+    }
+    if (ViewBag.location != null && !String.IsNullOrEmpty(ViewBag.location))
+        location = ViewBag.location;
+
+    //filter albums
+    List<Album> albums = new List<Album>();
+    List<Album> source = Model.Albums.ToList();
+    foreach(Album a in source)
+    {
+        if(location != "")
+        {
+            if(a.Location+"" == location)
+            {
+                List<Connection> c = Model.Connections.Where(x => x.Album == a.Id).ToList();
+                bool correct = true;
+                IDs.ForEach(x => { correct = correct && (c.Where(y => y.Person == x).Count() > 0); });
+                if (correct)
+                    albums.Add(a);
+            }
+        }
+        else
+        {
+            List<Connection> c = Model.Connections.Where(x => x.Album == a.Id).ToList();
+            bool correct = true;
+            IDs.ForEach(x => { correct = correct && (c.Where(y => y.Person == x).Count() > 0); });
+            if (correct)
+                albums.Add(a);
+        }
+    }
+    
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <a class="btn btn-primary w-100 p-3 mb-3" asp-controller="Color">Színek</a><br />
+            <a class="btn btn-warning w-100 p-3 mb-3" asp-controller="Person">Emberek</a><br />
+            <a class="btn btn-success w-100 p-3 mb-3" asp-controller="Location">Helyszínek</a><br />
+            <a class="btn btn-dark w-100 p-3 mb-3" asp-action="Download">Letöltés</a><br />
+            <a class="btn btn-info w-100 p-3 mb-3" asp-controller="Album" asp-action="New">Új album</a>
+
+            <form asp-action="Location">
+                <select class="form-control" name="location">
+                    <!option value="" @(location == "" ? "selected" : "")>Minden helyszín</!option>
+                    @foreach(Location l in locations)
+                    {
+                        <!option value="@l.Id" @(location == l.Id+"" ? "selected" : "")>@l.Name</!option>
+                    }
+                </select>
+                <input type="submit" value="Szűrés" class="btn btn-primary w-100 mt-1" />
+            </form>
+
+
+            @if(IDs.Count != 0)
+            {
+                <ul>
+                    @foreach(int id in IDs)
+                    {
+                        <a class="text-decoration-none text-danger" asp-action="DelPerson" asp-route-id="@id"><li>@people.Where(x => x.Id == id).First().Name</li></a>
+                    }
+                </ul>
+            }
+        </div>
+        <div class="col-10">
+            <div class="border border-2 border-success p-2 mb-3">
+                <form asp-action="AddPerson">
+                <label class="form-control-lg">Új ember hozzáfűzése: </label>
+                    <select class="form-control-lg" name="person">
+                    
+                    @foreach (Person p in Model.People)
+                    {
+                        @if (!IDs.Contains(p.Id))
+                        {
+                            <option value="@p.Id">@p.Name</option>
+                        }
+                    }
+                    </select>
+                    <input type="submit" class="btn btn-success" value="Személy hozzáadása a szűrőhöz" />
+                </form>
+            </div>
+            @foreach (Album a in albums)
+            {
+                <div class="card" style="width: 30 rem;background-color: #@colors.Where(x => x.Id == a.Color).First().Colorcode; border-radius: 0;">
+                    <div class="card-body">
+                        <a asp-controller="Album" asp-action="@a.Id" class="btn text-white stretched-link mt-4 mb-4 w-100 display-4">
+                            <h2 class="text-decoration-underline">@a.Name</h2>
+                            <i>@locations.Where(x => x.Id == a.Location).First().Name - @a.Date.ToString("yyyy-MM-dd")</i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    
+</div>
+
+

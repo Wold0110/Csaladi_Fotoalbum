@@ -1,0 +1,30 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@{
+    ViewData["Title"] = "Album létrehozása";
+}
+@model DatabaseContext
+<form asp-controller="Album" asp-action="Insert">
+    <label class="form-control-lg" for="name">Album neve:</label>
+    <input class="form-control-lg" type="text" name="name" placeholder="Az én albumom"/><br />
+    
+    <label class="form-control-lg mt-5" for="date">Dátum:</label>
+    <input type="date" name="date" class="form-control-lg" /><br />
+    
+    <label class="form-control-lg mt-5" for="color">Szín:</label>
+    <select class="form-control-lg" name="color">
+        @foreach(Color c in Model.Colors)
+        {
+            <option style="background-color: #@c.Colorcode;" class="text-white" value="@c.Id">@c.Name</option>
+        }
+    </select><br>
+
+    <label class="form-control-lg mt-5" for="location">Helyszínek:</label>
+    <select class="form-control-lg" name="location">
+        @foreach (Location l in Model.Locations)
+        {
+            <option value="@l.Id">@l.Name</option>
+        }
+    </select><br />
+
+    <input type="submit" class="btn btn-primary mt-5 ml-5" value="Album rögzítése"/>
+</form>

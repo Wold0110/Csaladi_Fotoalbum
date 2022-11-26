@@ -1,0 +1,15 @@
+﻿@using Csaladi_Fotoalbum.DatabaseModels;
+@model Color
+@{
+    ViewData["Title"] = "Szín szerkesztése";
+}
+<form asp-action="Update" asp-controller="Color">
+    <input type="hidden" value="@Model.Id" name="id" />
+    <label for="name" class="form-control-lg">Szín neve:</label>
+    <input class="form form-control-lg" type="text" value="@Model.Name" name="name">
+    <br />
+    <label for="code" class="form-control-lg mt-5">Szín kódja:</label>
+    <input class="form form-control-lg" type="color" value="#@Model.Colorcode" name="code">
+    <br />
+    <input type="submit" class="btn btn-primary" value="Frissítés">
+</form>
